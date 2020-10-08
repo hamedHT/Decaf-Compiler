@@ -1,8 +1,13 @@
 import antlr4 as ant
 from DecafLexer import DecafLexer
+from DecafParser import DecafParser
 
-filein = open('testdata/lexer/id1', 'r')
-lexer = DecafLexer(ant.InputStream(filein.read()))
+fileIn = open('testdata/parser/legal-01', 'r')
+lexer = DecafLexer(ant.InputStream(fileIn.read()))
 
-tokens = lexer.getAllTokens()
-print(lexer.symbolicNames[tokens[0].type])
+# tokens = lexer.getAllTokens()
+# for token in tokens:
+#     print(lexer.symbolicNames[token.type])
+
+parser = DecafParser(ant.CommonTokenStream(lexer))
+tree = parser.program() # parser.x() x being the g4 parser rule entry point

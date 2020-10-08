@@ -6,3 +6,12 @@ DecafLexer.py
 DecafLexer.tokens
 DecafListener.py
 DecafParser.py
+DecafBaseListener.class
+DecafBaseListener.java
+DecafLexer.class
+DecafLexer.java
+DecafListener.class
+DecafListener.java
+DecafParser$ProgramContext.class
+DecafParser.class
+DecafParser.java

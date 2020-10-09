@@ -1,49 +1,120 @@
 grammar Decaf;
 
-/*LEXER RULES*/
-/* variables names, reserved words, literals, symbols, operators */
+/*
+  LEXER RULES
+  variables names, reserved words, literals, symbols, operators
+*/
 
-CLASS: 'class';
-LCURLY: '{';
-RCURLY: '}';
-LSQBRACKET: '[';
-RSQBRACKET: ']';
-
+BOOLEAN : 'boolean';
+BREAK : 'break';
+CALLOUT : 'callout';
+CLASS : 'class';
+CONTINUE : 'continue';
+ELSE : 'else';
+FALSE : 'false';
+FOR : 'for';
+IF : 'if';
+INT : 'int';
+RETURN : 'return';
+TRUE : 'true';
+VOID : 'void';
+LCURLY : '{';
+RCURLY : '}';
+LSQUARE : '[';
+RSQUARE : ']';
+LBRACE : '(';
+RBRACE : ')';
 PLUS : '+';
 MINUS : '-';
 MULTIPLY : '*';
-LESS_THAN: '<';
-LESS_THAN_EQUAL_TO: '<=';
-NOT : '!=';
+DIVIDE : '/';
+MOD : '%';
+SEMICOLON : ';';
+COMMA : ',';
+EXCLAMATION : '!';
+LESS_THAN : '<';
+GREATER_THAN : '>';
+LESS_OR_EQUAL : '<=';
+GREATER_OR_EQUAL : '>=';
+DOUBLE_EQUAL : '==';
+NOT_EQUAL : '!=';
 AND : '&&';
-IF : 'if';
-NEW : 'new';
-INT: [0-9];
-BOOL: 'true' | 'false';
-STRING : '"' (ALPHA | DIGIT | ' ')* '"';
+OR : '||';
+ASSIGN : '=';
+PLUS_ASSIGN : '+=';
+MINUS_ASSIGN : '-=';
 
-fragment TAB : '\t';
-CHAR: '\'' (ALPHA | [0-9] | TAB) '\'';
+fragment ALPHA : [a-zA-Z_];
+fragment DIGIT : [0-9];
+fragment ALPHA_NUM : ALPHA | DIGIT;
+ID : ALPHA ALPHA_NUM*;
 
-fragment ALPHA: [a-zA-Z];
-ID: ALPHA+;
+DECIMAL_LITERAL : DIGIT+;
+fragment HEX_DIGIT : DIGIT | [a-fA-F];
+HEX_LITERAL : '0x' HEX_DIGIT+;
 
-IDENTIFIER : (ALPHA | '_')+;
-HEX_LITERAL : '0x' HEX_DIGIT HEX_DIGIT*;
-fragment HEX_DIGIT : DIGIT | [a-zA-Z];
-DIGIT : [0-9];
+WS : [ \t\r\n]+ -> skip;
+COMMENT : '//' ~'\n'* '\n' -> skip;
 
-// INT_LITERAL : DECIMAL_LITERAL | HEX_LITERAL;
-DECIMAL_LITERAL: DIGIT DIGIT*;
+fragment GOOD_CHARS : [ -~];
+fragment DOUBLE_CHARS : '\\' ('n' | '"' | '\'' | '\\');
+CHAR : '\'' (GOOD_CHARS | DOUBLE_CHARS) '\'';
 
-COMMENT: '//' ~'\n'* '\n' -> skip;
-WS: [ \t\r\n]+ -> skip;
+STRING_LITERAL : '"' (GOOD_CHARS | DOUBLE_CHARS)* '"';
 
-/*parser rules*/
+/*
+  PARSER RULES
+*/
 
-program: CLASS ID LCURLY field_decl* RCURLY EOF;
-// field_decl: data_type (ID | ID '[' INT_LITERAL ']')+; /* check , COMMA syntax */
-field_decl: data_type field_name (',' field_name)* ';';
-field_name : ID | ID LSQBRACKET int_literal RSQBRACKET;
+program : CLASS ID LCURLY field_decl* method_decl* RCURLY EOF;
+
+field_name : ID | ID LSQUARE int_literal RSQUARE;
+field_decl : data_type field_name (COMMA field_name)* SEMICOLON;
+
+//warning: type conflicts with a variable in ANTLR4
+data_type : INT | BOOLEAN;
+
+expr :  location
+  |     method_call
+  |     literal
+  |     LBRACE expr RBRACE
+  |     MINUS expr
+  |     EXCLAMATION expr
+  |     expr (MULTIPLY | DIVIDE | MOD) expr
+  |     expr (PLUS | MINUS) expr
+  |     expr (LESS_THAN | GREATER_THAN | LESS_OR_EQUAL | GREATER_OR_EQUAL) expr
+  |     expr (DOUBLE_EQUAL | NOT_EQUAL) expr
+  |     expr AND expr
+  |     expr OR expr;
+
+method_call : method_name LBRACE (expr (COMMA expr)*)? RBRACE
+  |           CALLOUT LBRACE STRING_LITERAL (COMMA callout_arg)* RBRACE;
+
+method_name : ID;
+callout_arg : expr | STRING_LITERAL;
+
+bool_literal : TRUE | FALSE;
+char_literal : CHAR;
 int_literal : DECIMAL_LITERAL | HEX_LITERAL;
-data_type: 'int' | 'boolean';
+literal : int_literal | bool_literal | char_literal;
+
+location : ID | ID LSQUARE expr RSQUARE;
+
+method_decl : return_type ID LBRACE (data_type ID (COMMA data_type ID)*)? RBRACE block;
+
+return_type : data_type | VOID;
+
+block : LCURLY var_decl* statement* RCURLY;
+
+var_decl : data_type ID (COMMA ID)* SEMICOLON;
+
+assign_op : ASSIGN | PLUS_ASSIGN | MINUS_ASSIGN;
+
+statement :   location assign_op expr SEMICOLON
+            | method_call SEMICOLON
+            | IF LBRACE expr RBRACE block (ELSE block)?
+            | FOR ID ASSIGN expr COMMA expr block
+            | RETURN expr? SEMICOLON
+            | BREAK SEMICOLON
+            | CONTINUE SEMICOLON
+            | block;

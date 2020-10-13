@@ -16,6 +16,7 @@ class DecafSemanticChecker(DecafVisitor):
         self.st.exitScope()
 
     def visitVar_decl(self, ctx: DecafParser.Var_declContext):
+        # semantic rule: No identifier is declared twice in the same scope
         line_num = ctx.start.line
         for var_decl in ctx.ID():
             var_name = var_decl.getText() # gets the variable name (eg. x)
@@ -38,6 +39,7 @@ class DecafSemanticChecker(DecafVisitor):
 
     # attempt to check all statement rules for a location symbol table check
     def visitStatement(self, ctx:DecafParser.StatementContext):
+        # semantic rule: No identifier is used before it is declared
         if ctx.location() != None:
             line_num = ctx.start.line
             var_name = ctx.location().ID().getText()

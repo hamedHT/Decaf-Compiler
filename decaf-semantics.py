@@ -11,7 +11,7 @@ class DecafSemanticChecker(DecafVisitor):
         # initialise an empty Symbol Table object
 
     def visitProgram(self, ctx: DecafParser.ProgramContext):
-        self.st.enterScope()  # enter symbol table scope
+        self.st.enterScope() # enter symbol table scope
         self.visitChildren(ctx)
         self.st.exitScope()
 
@@ -36,7 +36,22 @@ class DecafSemanticChecker(DecafVisitor):
 
         return self.visitChildren(ctx)
 
-filein = open('testdata/semantics/illegal-01.dcf', 'r')
+    # attempt to check all statement rules for a location symbol table check
+    def visitStatement(self, ctx:DecafParser.StatementContext):
+        if ctx.location() != None:
+            line_num = ctx.start.line
+            var_name = ctx.location().ID().getText()
+
+            var_symbol = self.st.lookup(var_name)
+
+            if var_symbol == None:
+                print('Error on line', line_num, 'variable \'', var_name,
+                      '\'is not declared')
+
+        self.visitChildren(ctx)
+
+
+filein = open('testdata/semantics/illegal-02.dcf', 'r')
 lexer = DecafLexer(ant.InputStream(filein.read()))
 
 stream = ant.CommonTokenStream(lexer)

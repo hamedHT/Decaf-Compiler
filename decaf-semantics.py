@@ -18,6 +18,7 @@ class DecafSemanticChecker(DecafVisitor):
 
     def visitVar_decl(self, ctx: DecafParser.Var_declContext):
         # semantic rule: No identifier is declared twice in the same scope
+        # test with testdata/semantics/illegal-01.dcf
         line_num = ctx.start.line
         for var_decl in ctx.ID():
             var_name = var_decl.getText()  # gets the variable name (eg. x)
@@ -53,7 +54,7 @@ class DecafSemanticChecker(DecafVisitor):
 
         self.visitChildren(ctx)
 
-    # warn the user that any method defined after the main method will never be executed.
+    # semantic rule: warn the user that any method defined after the main method will never be executed.
 
     # semantic rule: int_literal in an array declaration must be greater than 0
     def visitField_name(self, ctx: DecafParser.Field_nameContext):
@@ -66,11 +67,55 @@ class DecafSemanticChecker(DecafVisitor):
 
         return self.visitChildren(ctx)
 
-    # semantic rule: number and types of arguments in a method call must be the same as 
+    # semantic rule 5: number and types of arguments in a method call must be the same as
     #   the number and types of the formals, i.e., the signatures must be identical.
-    # 1. check lengths of method_call params === method_decl params
-    def visitMethod_call(self, ctx:DecafParser.Method_callContext):
-        print(len(ctx.expr()))
+    def visitMethod_decl(self, ctx: DecafParser.Method_declContext):
+        method_name = ctx.ID()[0].getText()
+        method_return_type = ctx.return_type().getText()
+        line_num = ctx.start.line
+        method_params = []
+        for x in ctx.data_type():
+            method_params.append(x.getText())  # get data type as a string
+        method_symbol = MethodSymbol(id=method_name,
+                                     type=method_return_type,
+                                     line=line_num,
+                                     params=method_params) # create a method symbol with ctx values
+        self.st.addSymbol(method_symbol) # push method symbol with params list to global scope
+        return self.visitChildren(ctx)
+
+    def visitMethod_call(self, ctx: DecafParser.Method_callContext):
+        # get method call
+        line_num = ctx.start.line
+        method_name = ctx.method_name().getText()
+        # lookup method call name in symbol table
+        method_symbol = self.st.lookup(method_name)
+        method_symbol_params = method_symbol.params
+        for i in range(max(len(method_symbol_params), len(ctx.expr()))):
+            # check out of bound index
+            if i >= len(method_symbol_params):
+                print(
+                    "Error you passed an unexpected parameter",
+                    ctx.expr()[i].literal().getText(),
+                    "on line",
+                    line_num,
+                )
+            else:
+                if method_symbol_params[i] == 'int':
+                    if ctx.expr()[i].literal().int_literal() == None:
+                        print("Error incorrect parameter data type expected",
+                              method_symbol.type, "received value",
+                              ctx.expr()[i].literal().getText(), "on line",
+                              line_num)
+                elif method_symbol_params[i] == 'boolean':
+                    if ctx.expr()[i].literal().bool_literal() == None:
+                        print("Error incorrect parameter date type expected",
+                              method_symbol.type, "received",
+                              ctx.expr()[i].literal(), "on line", line_num)
+                else:
+                    print(
+                        "missing method_symbol_params with data type classification:",
+                        method_symbol_params[i], " on line number", line_num)
+
         return self.visitChildren(ctx)
 
 

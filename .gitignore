@@ -27,3 +27,4 @@ __pycache__/DecafParser.cpython-38.pyc
 DecafVisitor.py
 __pycache__/DecafVisitor.cpython-38.pyc
 __pycache__/SymbolTable.cpython-38.pyc
+*.class

@@ -21,7 +21,7 @@ This project is practice for building a Compiler using Antlr4
 - [x] (2) No identifier is used before it is declared.
 - [ ] (3) The program contains a definition for a method called main that has no parameters (note that since execution starts at method main, any methods defined after main will never be executed).
 - [x] (4) The int_literal in an array declaration must be greater than 0.
-- [ ] (5) The number and types of arguments in a method call must be the same as the number and types of the formals, i.e., the signatures must be identical.
+- [x] (5) The number and types of arguments in a method call must be the same as the number and types of the formals, i.e., the signatures must be identical.
 - [ ] (6) If a method call is used as an expression, the method must return a result.
 - [ ] (7) A return statement must not have a return value unless it appears in the body of a method that is declared to return a value.
 - [ ] (8) The expression in a return statement must have the same type as the declared result type of the enclosing method definition.

@@ -6,21 +6,10 @@ DecafLexer.py
 DecafLexer.tokens
 DecafListener.py
 DecafParser.py
-DecafBaseListener.class
 DecafBaseListener.java
-DecafLexer.class
 DecafLexer.java
-DecafListener.class
 DecafListener.java
-DecafParser$ProgramContext.class
-DecafParser.class
 DecafParser.java
-DecafParser$Int_literalContext.class
-DecafParser$Field_nameContext.class
-DecafParser$Field_declContext.class
-DecafParser$Decimal_literalContext.class
-DecafParser$Deciaml_literalContext.class
-DecafParser$Data_typeContext.class
 testdata/test
 __pycache__/DecafLexer.cpython-38.pyc
 __pycache__/DecafParser.cpython-38.pyc
@@ -28,3 +17,4 @@ DecafVisitor.py
 __pycache__/DecafVisitor.cpython-38.pyc
 __pycache__/SymbolTable.cpython-38.pyc
 *.class
+.idea/*

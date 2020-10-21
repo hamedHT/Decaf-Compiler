@@ -56,11 +56,11 @@ HEX_LITERAL : '0x' HEX_DIGIT+;
 WS : [ \t\r\n]+ -> skip;
 COMMENT : '//' ~'\n'* '\n' -> skip;
 
-fragment GOOD_CHARS : [ -~];
+fragment BAD_CHARS : ~('\n' | '"' | '\'' | '\\');
 fragment DOUBLE_CHARS : '\\' ('n' | '"' | '\'' | '\\');
-CHAR : '\'' (GOOD_CHARS | DOUBLE_CHARS) '\'';
+CHAR : '\'' (BAD_CHARS | DOUBLE_CHARS) '\'';
 
-STRING_LITERAL : '"' (GOOD_CHARS | DOUBLE_CHARS)* '"';
+STRING_LITERAL : '"' (BAD_CHARS | DOUBLE_CHARS)* '"';
 
 /*
   PARSER RULES

@@ -99,7 +99,15 @@ class DecafSemanticChecker(DecafVisitor):
 
             self.body += 'addq $' + str(stack_len) + ', %rsp\n'
         elif ctx.CALLOUT():
-            pass
+            for i in range(len(ctx.callout_arg())):
+                if ctx.callout_arg(i).STRING_LITERAL():
+                    callout_arg = ctx.callout_arg(i).getText()
+                    label = 'str' + str(ctx.callout_arg(i).start.start)
+                    self.head += label + ': .asciz ' + callout_arg + '\n'
+                    self.st.stack_pointer[-1] += 8
+                    self.body += 'movq $' + label + ', ' + str(-self.st.stack_pointer[-1]) + '(%rsp)\n'
+                else:
+                    pass
 
     def visitExpr(self, ctx: DecafParser.ExprContext):
         if ctx.literal():
@@ -118,7 +126,7 @@ class DecafSemanticChecker(DecafVisitor):
             self.visitChildren(ctx)
 
 
-filein = open('testdata/codegen/17-webinar_test.dcf', 'r')
+filein = open('testdata/codegen/01-callout.dcf', 'r')
 lexer = DecafLexer(ant.InputStream(filein.read()))
 
 stream = ant.CommonTokenStream(lexer)

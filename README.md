@@ -41,7 +41,7 @@ This project is practice for building a Compiler using Antlr4
 ## Decaf Code generation testing todo
 testdata/codegen
 - [x] 00-empty
-- [ ] 01-callout
+- [x] 01-callout Add Decaf callout string to Head section of GNU assembly 
 - [ ] 02-expr
 - [ ] 03-math
 - [ ] 04-math2

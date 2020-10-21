@@ -37,3 +37,19 @@ This project is practice for building a Compiler using Antlr4
 - [ ] (16) The location and the expr in an incrementing/decrementing assignment, location += expr and location --= expr, must be of type
 - [ ] (17) The initial expr and the ending expr of for must have type int.
 - [ ] (18) Break and continue statements must be within the body of a for.
+
+## Decaf Code generation testing todo
+testdata/codegen
+- [x] 00-empty
+- [ ] 01-callout
+- [ ] 02-expr
+- [ ] 03-math
+- [ ] 04-math2
+- [ ] 05-calls
+- [ ] 06-control-flow
+- [ ] 07-recursion
+- [ ] 08-array
+- [ ] 09-global
+- [ ] 10-bounds
+- [ ] see codegen directory for more ...
+- [x] 17-webinar_test.dcf

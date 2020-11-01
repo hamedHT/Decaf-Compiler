@@ -79,8 +79,8 @@ class DecafSemanticChecker(DecafVisitor):
         method_symbol = MethodSymbol(id=method_name,
                                      type=method_return_type,
                                      line=line_num,
-                                     params=method_params) # create a method symbol with ctx values
-        self.st.addSymbol(method_symbol) # push method symbol with params list to global scope
+                                     params=method_params)  # create a method symbol with ctx values
+        self.st.addSymbol(method_symbol)  # push method symbol with params list to global scope
         return self.visitChildren(ctx)
 
     def visitMethod_call(self, ctx: DecafParser.Method_callContext):
@@ -98,6 +98,7 @@ class DecafSemanticChecker(DecafVisitor):
                     ctx.expr()[i].literal().getText(),
                     "on line",
                     line_num,
+                    ", the number and types of arguments in a method call must be the same as the number and types of the formals"
                 )
             else:
                 if method_symbol_params[i] == 'int':
@@ -105,16 +106,22 @@ class DecafSemanticChecker(DecafVisitor):
                         print("Error incorrect parameter data type expected",
                               method_symbol.type, "received value",
                               ctx.expr()[i].literal().getText(), "on line",
-                              line_num)
+                              line_num,
+                              ", the number and types of arguments in a method call must be the same as the number and types of the formals"
+                              )
                 elif method_symbol_params[i] == 'boolean':
                     if ctx.expr()[i].literal().bool_literal() == None:
                         print("Error incorrect parameter date type expected",
                               method_symbol.type, "received",
-                              ctx.expr()[i].literal(), "on line", line_num)
+                              ctx.expr()[i].literal(), "on line", line_num,
+                              ", the number and types of arguments in a method call must be the same as the number and types of the formals"
+                              )
                 else:
                     print(
                         "missing method_symbol_params with data type classification:",
-                        method_symbol_params[i], " on line number", line_num)
+                        method_symbol_params[i], " on line number", line_num,
+                        ", the number and types of arguments in a method call must be the same as the number and types of the formals"
+                    )
 
         return self.visitChildren(ctx)
 

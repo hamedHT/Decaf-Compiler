@@ -51,5 +51,7 @@ testdata/codegen
 - [ ] 08-array
 - [ ] 09-global
 - [ ] 10-bounds
-- [ ] see codegen directory for more ...
+
+see codegen directory for more ...
 - [x] 17-webinar_test.dcf
+- [ ] 18-Arrays implement array declaration with statements and expressions

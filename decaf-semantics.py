@@ -90,43 +90,51 @@ class DecafSemanticChecker(DecafVisitor):
         # lookup method call name in symbol table
         method_symbol = self.st.lookup(method_name)
         method_symbol_params = method_symbol.params
-        for i in range(max(len(method_symbol_params), len(ctx.expr()))):
-            # check out of bound index
-            if i >= len(method_symbol_params):
-                print(
-                    "Error you passed an unexpected parameter",
-                    ctx.expr()[i].literal().getText(),
-                    "on line",
-                    line_num,
-                    ", the number and types of arguments in a method call must be the same as the number and types of the formals"
-                )
-            else:
-                if method_symbol_params[i] == 'int':
-                    if ctx.expr()[i].literal().int_literal() == None:
-                        print("Error incorrect parameter data type expected",
-                              method_symbol.type, "received value",
-                              ctx.expr()[i].literal().getText(), "on line",
-                              line_num,
-                              ", the number and types of arguments in a method call must be the same as the number and types of the formals"
-                              )
-                elif method_symbol_params[i] == 'boolean':
-                    if ctx.expr()[i].literal().bool_literal() == None:
-                        print("Error incorrect parameter date type expected",
-                              method_symbol.type, "received",
-                              ctx.expr()[i].literal(), "on line", line_num,
-                              ", the number and types of arguments in a method call must be the same as the number and types of the formals"
-                              )
-                else:
-                    print(
-                        "missing method_symbol_params with data type classification:",
-                        method_symbol_params[i], " on line number", line_num,
+        if len(ctx.expr()) != len(method_symbol_params):
+            return print(
+                        "Error you passed an incorrect combination of parameters",
+                        "on line",
+                        line_num,
                         ", the number and types of arguments in a method call must be the same as the number and types of the formals"
                     )
+        else:
+            for i in range(max(len(method_symbol_params), len(ctx.expr()))):
+                # check out of bound index
+                if i >= len(method_symbol_params):
+                    print(
+                        "Error you passed an unexpected parameter",
+                        ctx.expr()[i].literal().getText(),
+                        "on line",
+                        line_num,
+                        ", the number and types of arguments in a method call must be the same as the number and types of the formals"
+                    )
+                else:
+                    if method_symbol_params[i] == 'int':
+                        if ctx.expr()[i].literal().int_literal() == None:
+                            print("Error incorrect parameter data type expected",
+                                  method_symbol.type, "received value",
+                                  ctx.expr()[i].literal().getText(), "on line",
+                                  line_num,
+                                  ", the number and types of arguments in a method call must be the same as the number and types of the formals"
+                                  )
+                    elif method_symbol_params[i] == 'boolean':
+                        if ctx.expr()[i].literal().bool_literal() == None:
+                            print("Error incorrect parameter date type expected",
+                                  method_symbol.type, "received",
+                                  ctx.expr()[i].literal(), "on line", line_num,
+                                  ", the number and types of arguments in a method call must be the same as the number and types of the formals"
+                                  )
+                    else:
+                        print(
+                            "missing method_symbol_params with data type classification:",
+                            method_symbol_params[i], " on line number", line_num,
+                            ", the number and types of arguments in a method call must be the same as the number and types of the formals"
+                        )
 
         return self.visitChildren(ctx)
 
 
-filein = open('testdata/semantics/illegal-05.dcf', 'r')
+filein = open('testdata/semantics/illegal-20.dcf', 'r')
 lexer = DecafLexer(ant.InputStream(filein.read()))
 
 stream = ant.CommonTokenStream(lexer)

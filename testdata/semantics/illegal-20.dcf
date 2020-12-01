@@ -1,0 +1,10 @@
+class Program {
+  int foo(int i, int b) {
+    return 4;
+  }
+
+  void main() {
+    int x;
+    x = foo(1);
+  }
+}
